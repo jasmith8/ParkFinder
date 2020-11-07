@@ -12,8 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.smithjarod_parkfinder.fragments.NationalFragment;
+import com.example.smithjarod_parkfinder.fragments.StateFragment;
 import com.google.android.gms.dynamic.SupportFragmentWrapper;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
     public static final String TAG = "TAG.SearchActivity";
@@ -29,12 +32,17 @@ public class SearchActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    ArrayList<ParkObject> parkObjects = new ArrayList<>();
+    Parks_Helper parks_helper = new Parks_Helper();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_main);
         tabLayout = this.findViewById(R.id.tabLayout);
         typeOfList = getIntent().getStringExtra(MainActivity.EXTRA_INFO);
+
+        parkObjects =  parkObjects = parks_helper.parkObjects(true, this,"ALL");
 
         sharedPreferences = context.getSharedPreferences(NATIONAL_STATE,Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -60,9 +68,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-//        //tabLayoutTab =tabLayout.getTabAt(0);
-//        tabLayout.setScrollPosition(0,0f,true);
-//        //tabLayoutTab.select();
     }
     
     void chooseNationalState(int selectedTab, SharedPreferences.Editor editor){
@@ -80,12 +85,14 @@ public class SearchActivity extends AppCompatActivity {
         Log.d(TAG, "openNationalView: ");
 
         getSupportFragmentManager().beginTransaction().
-                replace(R.id.mainFrame, NationalFragment.newInstance()).commit();
+                replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects)).commit();
 
     }
 
     void openStateView(){
         Log.d(TAG, "openStateView: ");
+        getSupportFragmentManager().beginTransaction().
+                replace(R.id.mainFrame, StateFragment.newInstance(parkObjects)).commit();
     }
 
 
