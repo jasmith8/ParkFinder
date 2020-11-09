@@ -30,7 +30,7 @@ public class Parks_Helper {
     boolean _isPark;
     String _stateCode;
     String parksURL = "https://developer.nps.gov/api/v1/parks?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=fullName";
-    String campsURL;
+    String campsURL = "https://developer.nps.gov/api/v1/campgrounds?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=name";
     ArrayList<ParkObject> tempArray = new ArrayList<>();
 
     public ArrayList<ParkObject> parkObjects(Boolean isPark, Context context, String stateCode) {
@@ -48,6 +48,7 @@ public class Parks_Helper {
         } else {
             //TODO: finish similar to isPark true
             jsonURL = campsURL;
+            tempArray = getList(context);
         }
 
         Collections.sort(tempArray, new Comparator<ParkObject>(){
@@ -124,6 +125,30 @@ public class Parks_Helper {
     private void getCampJSON() {
 
         //TODO: setup similar to getParkJSON
+
+        try {
+            JSONObject outerObject = new JSONObject(json);
+            JSONArray data = outerObject.getJSONArray("data");
+            for (int i =0;i<data.length();i++){
+                JSONObject obj = data.getJSONObject(i);
+                String parkName = obj.getString("name");
+                String tempStates = obj.getString("states");
+                String[] parkStates = tempStates.split(",");
+                String parkCode = obj.getString("parkCode");
+                String latitude = obj.getString("latitude");
+                String longitude = obj.getString("longitude");
+                parkName = parkName.replace("&#241;", "ñ");
+                Log.d(TAG, "getParkJSON: "+parkName);
+                for(String code:parkStates){
+                    String parkStateCode = code;
+
+                    ParkObject parkObject = new ParkObject(parkName,parkStateCode,parkCode,latitude,longitude);
+                    tempArray.add(parkObject);
+                }
+            }
+        }catch ( JSONException e){
+            e.printStackTrace();
+        }
     }
 
     private void getParkJSON() {
@@ -146,12 +171,7 @@ public class Parks_Helper {
                     ParkObject parkObject = new ParkObject(parkName,parkStateCode,parkCode,latitude,longitude);
                     tempArray.add(parkObject);
                 }
-
             }
-
-
-
-
         }catch ( JSONException e){
             e.printStackTrace();
         }

@@ -58,8 +58,6 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         //TODO: LOAD THE ARRAY
         parkObjects = new ArrayList<>();
         parkObjects = (ArrayList<ParkObject>)getArguments().getSerializable(ARRAY) ;
-//        parkObjects = parks_helper.parkObjects(true, getContext(),"ALL");
-        Log.d(TAG, "onActivityCreated: "+parkObjects.size());
 
         //TODO: LOAD THE LISTVIEW
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
@@ -73,14 +71,10 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
                 String[] getStateCodesArray = getResources().getStringArray(R.array.stateCodesArray);
                 String[] getStatesArray = getResources().getStringArray(R.array.statesArray);
                 String getStateCode = parkObjects.get(position).getState();
-                Log.d(TAG, "getView: "+getStateCode);
                 int index = Arrays.asList(getStateCodesArray).indexOf(getStateCode);
                 String getFullStateName = getStatesArray[index];
-                Log.d(TAG, "getView: "+getFullStateName);
                 textView1.setText(getFullStateName);
-                //textView1.setText(parkObjects.get(position).getState());
                 textView2.setText(parkObjects.get(position).getName());
-                Log.d(TAG, "getView: ");
                 return view;
             }
         };

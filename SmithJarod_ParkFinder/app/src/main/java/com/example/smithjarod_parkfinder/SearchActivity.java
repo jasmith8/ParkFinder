@@ -41,8 +41,15 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.search_main);
         tabLayout = this.findViewById(R.id.tabLayout);
         typeOfList = getIntent().getStringExtra(MainActivity.EXTRA_INFO);
+        Log.d(TAG, "onCreate: "+typeOfList);
+        if(typeOfList.contains(MainActivity.PARKS)){
+            Log.d(TAG, "onCreate: get parks");
+            parkObjects =  parkObjects = parks_helper.parkObjects(true, this,"ALL");
+        } else {
+            Log.d(TAG, "onCreate: get camps");
+            parkObjects =  parkObjects = parks_helper.parkObjects(false, this,"ALL");
+        }
 
-        parkObjects =  parkObjects = parks_helper.parkObjects(true, this,"ALL");
 
         sharedPreferences = context.getSharedPreferences(NATIONAL_STATE,Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();

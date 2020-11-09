@@ -1,5 +1,9 @@
 package com.example.smithjarod_parkfinder.fragments;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,14 +21,16 @@ import androidx.fragment.app.Fragment;
 
 import com.example.smithjarod_parkfinder.ParkObject;
 import com.example.smithjarod_parkfinder.R;
-import com.example.smithjarod_parkfinder.SearchActivity;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class StateFragment extends Fragment  implements AdapterView.OnItemSelectedListener{
+public class StateFragment extends Fragment  implements AdapterView.OnItemSelectedListener, LocationListener {
     public static final String TAG = "TAG.StateFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
+
 
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
     Spinner stateSpinner;
@@ -77,7 +83,7 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         stateSelected = stateCodes[0];
         filteredList.clear();
         filteredList = (ArrayList<ParkObject>) parkObjects.stream().filter(parkObject -> parkObject.getState().contains(stateSelected)).collect(Collectors.toList());
-        openList();
+        //openList();
         //TODO:LOAD FRAGMENT
 
     }
@@ -93,7 +99,7 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
 
         //TODO: LOAD FRAGMENT
         if(parent == mapOrListSpinner){
-            if (listSelected){
+            if (position ==0){
                 listSelected = true;
                 Log.d(TAG, "onItemSelected: list selected");
             } else {
@@ -103,8 +109,21 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         }
 
         if (listSelected){
+            Log.d(TAG, "onItemSelected: open list");
             openList();
+        } else {
+            Log.d(TAG, "onItemSelected: open map");
+            openMap();
         }
+    }
+
+    void openMap(){
+        MapFragment mapFragment = MapFragment.newInstance();
+        Bundle bundle = new Bundle();
+        //bundle.putSerializable(ARRAY,filteredList);
+        mapFragment.setArguments(bundle);
+        getActivity().getFragmentManager().beginTransaction()
+                .replace(R.id.stateFrame,mapFragment).commit();
     }
 
     void openList(){
@@ -114,6 +133,21 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
 
     }
 }

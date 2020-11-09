@@ -21,17 +21,12 @@ public class ParkObject implements Serializable {
     public String getName(){
         return parkName;
     }
-    public String getState(){
-//        String stateCodeList="";
-//        for (String code: parkStates){
-//            stateCodeList = stateCodeList+", "+code;
-//        }
-//        return stateCodeList;
-        return parkStates;
-    }
+    public String getState(){ return parkStates; }
     public String getCode(){
         return parkCode;
     }
+    public String getLatitude(){ return latitude; }
+    public String getLongitude(){return longitude; }
 
 
 }
