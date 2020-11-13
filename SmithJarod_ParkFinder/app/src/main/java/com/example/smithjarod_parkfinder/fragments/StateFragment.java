@@ -1,9 +1,7 @@
 package com.example.smithjarod_parkfinder.fragments;
 
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.smithjarod_parkfinder.ParkObject;
+import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.example.smithjarod_parkfinder.R;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -83,7 +80,6 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         stateSelected = stateCodes[0];
         filteredList.clear();
         filteredList = (ArrayList<ParkObject>) parkObjects.stream().filter(parkObject -> parkObject.getState().contains(stateSelected)).collect(Collectors.toList());
-        //openList();
         //TODO:LOAD FRAGMENT
 
     }
@@ -120,15 +116,15 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
     void openMap(){
         MapFragment mapFragment = MapFragment.newInstance();
         Bundle bundle = new Bundle();
-        //bundle.putSerializable(ARRAY,filteredList);
+        bundle.putSerializable(ARRAY,filteredList);
         mapFragment.setArguments(bundle);
         getActivity().getFragmentManager().beginTransaction()
-                .replace(R.id.stateFrame,mapFragment).commit();
+                .replace(R.id.mapFrame,mapFragment).commit();
     }
 
     void openList(){
-        getActivity().getSupportFragmentManager().beginTransaction().
-                replace(R.id.stateFrame, StateListFragment.newInstance(filteredList)).commit();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.stateFrame, StateListFragment.newInstance(filteredList)).commit();
     }
 
     @Override

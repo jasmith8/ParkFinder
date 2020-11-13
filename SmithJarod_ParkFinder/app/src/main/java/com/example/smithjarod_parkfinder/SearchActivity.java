@@ -1,19 +1,15 @@
 package com.example.smithjarod_parkfinder;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.smithjarod_parkfinder.fragments.NationalFragment;
 import com.example.smithjarod_parkfinder.fragments.StateFragment;
-import com.google.android.gms.dynamic.SupportFragmentWrapper;
+import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -49,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: get camps");
             parkObjects =  parkObjects = parks_helper.parkObjects(false, this,"ALL");
         }
-
+        getSupportFragmentManager().executePendingTransactions();
 
         sharedPreferences = context.getSharedPreferences(NATIONAL_STATE,Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -90,10 +86,8 @@ public class SearchActivity extends AppCompatActivity {
 
     void openNationalView(){
         Log.d(TAG, "openNationalView: ");
-
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects)).commit();
-
     }
 
     void openStateView(){

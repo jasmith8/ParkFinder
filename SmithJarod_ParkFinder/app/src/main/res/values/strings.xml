@@ -2,6 +2,14 @@
     <string name="app_name">ParkFinder</string>
     <string name="parks">Parks</string>
     <string name="camping">Camping</string>
+    <string name="national">National</string>
+    <string name="state">State</string>
+    <string name="location">Location:</string>
+    <string name="fees">Fees:</string>
+    <string name="hours">Hours:</string>
+    <string name="description">Description:</string>
+    <string name="activities">Activities:</string>
+    <string name="photos">Photos:</string>
 
     <string-array name="listOrMapsArray">
         <item>List</item>

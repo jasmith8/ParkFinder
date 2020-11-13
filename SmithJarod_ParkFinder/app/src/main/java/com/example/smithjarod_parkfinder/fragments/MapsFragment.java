@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.smithjarod_parkfinder.ParkObject;
-import com.example.smithjarod_parkfinder.R;
+import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,7 +15,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback,
         GoogleMap.InfoWindowAdapter, GoogleMap.OnInfoWindowClickListener {
@@ -25,12 +22,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
 
     private GoogleMap mMap;
-    private double lat;
-    private double lon;
+    private double lat=0;
+    private double lon=0;
     private int markerCounter=0;
-    private ArrayList<ParkObject> parkObjects;
+    private ArrayList<ParkObject> parkObjects = new ArrayList<>();
 
-
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+        Log.d(TAG, "onCreateView: ");
+        return super.onCreateView(layoutInflater, viewGroup, bundle);
+    }
 
     public static MapsFragment newInstance() {
         Bundle args = new Bundle();
@@ -43,18 +44,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         Log.d(TAG, "onCreate: ");
-
-        parkObjects = (ArrayList<ParkObject>) Objects.requireNonNull(getArguments()).getSerializable(ARRAY);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (supportMapFragment !=null){
-            supportMapFragment.getMapAsync(this);
-        }
-        return super.onCreateView(layoutInflater, viewGroup, bundle);
-    }
 
     @Override
     public void onActivityCreated(Bundle bundle) {
@@ -85,9 +76,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady: ");
         mMap = googleMap;
-        //mMap.setInfoWindowAdapter(this);
-        //mMap.setOnInfoWindowClickListener(this);
-        //addMapLocations();
+//        mMap.setInfoWindowAdapter(this);
+//        mMap.setOnInfoWindowClickListener(this);
+//        addMapLocations();
     }
 
 
@@ -109,6 +100,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
             lat = Double.parseDouble(obj.getLatitude());
             lon = Double.parseDouble(obj.getLongitude());
             LatLng latLng = new LatLng(lat,lon);
+            Log.d(TAG, "addMapLocations: "+latLng);
             Marker marker = mMap.addMarker(new MarkerOptions().title(obj.getName()).position(latLng));
             marker.setTag(markerCounter);
             markerCounter++;
