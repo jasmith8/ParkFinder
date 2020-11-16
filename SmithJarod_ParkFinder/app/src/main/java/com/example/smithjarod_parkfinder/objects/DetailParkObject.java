@@ -35,31 +35,31 @@ public class DetailParkObject {
         this.imageArray = imageArray;
     }
 
-    String getParkNameText(){
+    public String getParkNameText(){
         return parkNameText;
     }
-    String getParkUrlText(){
+    public String getParkUrlText(){
         return parkUrlText;
     }
-    String getDescriptionDetailText(){
+    public String getDescriptionDetailText(){
         return descriptionDetailText;
     }
-    String getHoursDetailText(){
+    public String getHoursDetailText(){
         return hoursDetailText;
     }
-    String getFeesDetailText(){
+    public String getFeesDetailText(){
         return feesDetailText;
     }
-    String getActivitiesDetailText(){
+    public String getActivitiesDetailText(){
         return activitiesDetailText;
     }
-    String getParkId(){
+    public String getParkId(){
         return parkId;
     }
-    ArrayList<AddressObject> getAddresses(){
+    public ArrayList<AddressObject> getAddresses(){
         return addresses;
     }
-    ArrayList<String> getImageArray(){
+    public ArrayList<String> getImageArray(){
         return imageArray;
     }
 }

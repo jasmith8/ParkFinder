@@ -9,4 +9,13 @@ public class AddressObject {
         this.address = address;
         this.type = type;
     }
+
+    public String getAddress() {
+        return address;
+
+    }
+    public String getType(){
+        return type;
+    }
+
 }

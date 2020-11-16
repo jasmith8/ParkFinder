@@ -1,5 +1,6 @@
 package com.example.smithjarod_parkfinder.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,12 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 
+import com.example.smithjarod_parkfinder.DetailParkActivity;
+import com.example.smithjarod_parkfinder.SearchActivity;
 import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.example.smithjarod_parkfinder.Parks_Helper;
 import com.example.smithjarod_parkfinder.R;
@@ -25,17 +29,19 @@ import java.util.concurrent.ExecutionException;
 public class NationalFragment extends ListFragment implements AdapterView.OnItemClickListener {
     public static final String TAG = "TAG.NationalFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
+    public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
     ArrayList<ParkObject> parkObjects;
     Parks_Helper parks_helper = new Parks_Helper();
-
+    boolean isPark = true;
     public NationalFragment(){
         
     }
 
-    public static NationalFragment newInstance(ArrayList<ParkObject> objects) {
+    public static NationalFragment newInstance(ArrayList<ParkObject> objects, boolean isPark) {
         
         Bundle args = new Bundle();
         args.putSerializable(ARRAY, objects);
+        args.putBoolean(ISPARK, isPark);
         NationalFragment fragment = new NationalFragment();
         fragment.setArguments(args);
         return fragment;
@@ -54,6 +60,7 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         //TODO: LOAD THE ARRAY
         parkObjects = new ArrayList<>();
         parkObjects = (ArrayList<ParkObject>)getArguments().getSerializable(ARRAY) ;
+        isPark = getArguments().getBoolean(ISPARK);
         Log.d(TAG, "onActivityCreated: "+parkObjects.size());
 
         DataTask task = new DataTask();
@@ -102,7 +109,22 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             setListAdapter(adapter);
-            getListView();
+            ListView lv = getListView();
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d(TAG, "onItemClick: ");
+                    String parkId = parkObjects.get(position).getParkId();
+                    Intent intent= new Intent(getContext(), DetailParkActivity.class);
+                    if (isPark){
+                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+                    } else {
+                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
+                    }
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+                    startActivity(intent);
+                }
+            });
             Log.d(TAG, "onActivityCreated: loaded adapter");
         }
     }

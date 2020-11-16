@@ -45,13 +45,11 @@ public class Parks_Helper {
             tempArray = getList(context);
 
         } else {
-            //TODO: finish similar to isPark true
             jsonURL = campsURL;
             tempArray = getList(context);
         }
 
         Collections.sort(tempArray, new Comparator<ParkObject>(){
-
             @Override
             public int compare(ParkObject o1, ParkObject o2) {
                 return o1.getState().compareToIgnoreCase(o2.getState());
@@ -61,13 +59,39 @@ public class Parks_Helper {
         return tempArray;
     }
 
-    public ArrayList<DetailParkObject> detailParkObjects(Boolean isPark, Context context, String _parkId){
+    public ArrayList<DetailParkObject> detailParkObjects(Boolean isPark, Context context, String parkId){
+        _isPark = isPark;
+        _parkId = parkId;
+        if (isPark == true){
+            Log.d(TAG, "detailParkObjects: ");
+            jsonURL = parksURL+"&id="+parkId;
+            Log.d(TAG, "detailParkObjects: "+jsonURL);
+            tempDetailParkArray = getDetailParkList(context);
+
+        } else {
+            //TODO: finish similar to isPark true
+            jsonURL = campsURL+"&id="+parkId;
+            Log.d(TAG, "detailParkObjects: "+jsonURL);
+            tempDetailParkArray = getDetailParkList(context);
+        }
+        Log.d(TAG, "detailParkObjects: "+tempDetailParkArray.size());
+        Log.d(TAG, "detailParkObjects: "+jsonURL);
         return tempDetailParkArray;
     }
 
 
 
     public ArrayList<ParkObject>getList(Context context){
+        getConnection(context);
+        return tempArray;
+    }
+    public ArrayList<DetailParkObject>getDetailParkList(Context context){
+        getConnection(context);
+        Log.d(TAG, "getDetailParkList: "+tempDetailParkArray.size());
+        return tempDetailParkArray;
+    }
+
+    void getConnection(Context context){
         ConnectivityManager mgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (mgr !=null){
             NetworkInfo networkInfo = mgr.getActiveNetworkInfo();
@@ -83,15 +107,15 @@ public class Parks_Helper {
                         e.printStackTrace();
                     }
                 }
-                
+
             }
 
         } else {
             //TODO: TOAST
         }
-
-        return tempArray;
     }
+
+
 
     private String grabData(){
         String data = "";
@@ -107,12 +131,24 @@ public class Parks_Helper {
             String data = "";
             data = getNetworkData();
             json = data;
+            Log.d(TAG, "doInBackground: "+_parkId);
             if(_isPark){
-                getParkJSON();
+                if (_parkId.contains("ALL")){
+                    Log.d(TAG, "doInBackground: true");
+                    getParkJSON();
+                } else {
+                    Log.d(TAG, "doInBackground: false");
+                    getParkDetailJSON();
+                }
             } else {
-                getCampJSON();
+                if (_parkId.contains("ALL")) {
+                    Log.d(TAG, "doInBackground: true");
+                    getCampJSON();
+                }else {
+                    Log.d(TAG, "doInBackground: false");
+                    getParkDetailJSON();
+                }
             }
-            Log.d(TAG, "doInBackground: ");
             return data;
         }
 
@@ -148,7 +184,7 @@ public class Parks_Helper {
                 String latitude = obj.getString("latitude");
                 String longitude = obj.getString("longitude");
 
-                Log.d(TAG, "getParkJSON: "+parkName);
+                Log.d(TAG, "getCampJSON: "+parkName);
                 for(String code:parkStates){
                     String parkStateCode = code;
 
@@ -162,6 +198,7 @@ public class Parks_Helper {
     }
 
     private void getParkJSON() {
+        Log.d(TAG, "getParkJSON: ");
         try {
             JSONObject outerObject = new JSONObject(json);
             JSONArray data = outerObject.getJSONArray("data");
@@ -186,27 +223,32 @@ public class Parks_Helper {
             }
         }catch ( JSONException e){
             e.printStackTrace();
+            Log.d(TAG, "getParkJSON: "+e);
         }
     }
     private void getParkDetailJSON() {
+        Log.d(TAG, "getParkDetailJSON: ");
         try {
             JSONObject outerObject = new JSONObject(json);
             JSONArray data = outerObject.getJSONArray("data");
             for (int i =0;i<data.length();i++){
                 JSONObject obj = data.getJSONObject(i);
-
                 String parkName = obj.getString("fullName");
                 parkName = parkName.replace("&#241;", "ñ");
                 parkName = parkName.replace("&#257;", "ā");
                 parkName = parkName.replace("&#333;", "ō");
-
+                //Log.d(TAG, "getParkDetailJSON: "+parkName);
                 String parkUrl = obj.getString("url");
+                //Log.d(TAG, "getParkDetailJSON: "+parkUrl);
                 String description = obj.getString("description");
-
+                //Log.d(TAG, "getParkDetailJSON: "+description);
                 JSONArray hoursArray = obj.getJSONArray("operatingHours");
                 String hours="";
                 for (int k =0;k<hoursArray.length();k++){
                     JSONObject obj2 = hoursArray.getJSONObject(k);
+                    if (k!=0){
+                        hours=hours+"\n";
+                    }
                     hours = "NAME: "+obj2.getString("name")+"\n";
                     JSONObject standardHoursObj = obj2.getJSONObject("standardHours");
                     hours = hours+"Monday: "+standardHoursObj.getString("monday")+"\n";
@@ -215,43 +257,60 @@ public class Parks_Helper {
                     hours = hours+"Thursday: "+standardHoursObj.getString("thursday")+"\n";
                     hours = hours+"Friday: "+standardHoursObj.getString("friday")+"\n";
                     hours = hours+"Saturday: "+standardHoursObj.getString("saturday")+"\n";
-                    hours = hours+"Sunday: "+standardHoursObj.getString("sunday")+"\n\n";
+                    hours = hours+"Sunday: "+standardHoursObj.getString("sunday");
                 }
-
+                //Log.d(TAG, "getParkDetailJSON: "+hours);
                 JSONArray feesArray = obj.getJSONArray("entranceFees");
+                //Log.d(TAG, "getParkDetailJSON: "+feesArray.length());
                 String fees = "";
                 for (int p=0;p<feesArray.length();p++){
                     JSONObject obj3 = feesArray.getJSONObject(p);
+                    if (p!=0){
+                        fees = fees+"\n";
+                    }
                     fees  = "Title: "+obj3.getString("title")+"\n";
+                    //Log.d(TAG, "getParkDetailJSON: "+fees);
                     fees = fees+"Cost: $"+obj3.getString("cost")+"\n";
-                    fees = fees+"Description: "+obj3.getString(description)+"\n\n";
+                    //Log.d(TAG, "getParkDetailJSON: "+fees);
+                    fees = fees+"Description: "+obj3.getString("description");
+                    //Log.d(TAG, "getParkDetailJSON: "+fees);
                 }
-
+                //Log.d(TAG, "getParkDetailJSON: "+fees);
                 JSONArray activitiesArray = obj.getJSONArray("activities");
                 String activities = "";
                 for (int q=0; q<activitiesArray.length();q++){
                     JSONObject obj4 = activitiesArray.getJSONObject(q);
-                    activities = activities+" "+obj4.getString("name")+", ";
+                    activities = activities+obj4.getString("name")+", ";
                 }
-
+                //Log.d(TAG, "getParkDetailJSON: "+activities);
                 String parkId = obj.getString("id");
-
+                //Log.d(TAG, "getParkDetailJSON: "+parkId);
                 JSONArray addressArray = obj.getJSONArray("addresses");
+                //Log.d(TAG, "getParkDetailJSON: "+addressArray.length());
                 ArrayList<AddressObject> addressObjects = new ArrayList<>();
                 for (int w =0; w<addressArray.length();w++){
                     JSONObject obj5 = addressArray.getJSONObject(w);
                     String type = obj5.getString("type");
+                    //Log.d(TAG, "getParkDetailJSON: "+type);
                     String address ="";
-                    address = address+obj5.getString("addresses")+", ";
-                    address = address+obj5.getString("line1")+", ";
-                    address = address+obj5.getString("line2")+", ";
-                    address = address+obj5.getString("line3")+", ";
-                    address = address+obj5.getString("city")+", ";
-                    address = address+obj5.getString("stateCode")+", ";
+                    if (!obj5.getString("line1").contains("PO B") && !obj5.getString("line1").isEmpty()){
+                        Log.d(TAG, "getParkDetailJSON: ");
+                        address = address+obj5.getString("line1")+", \n";
+                    }
+                    if (!obj5.getString("line2").contains("PO B") && !obj5.getString("line2").isEmpty()) {
+                        Log.d(TAG, "getParkDetailJSON: ");
+                        address = address + obj5.getString("line2") + ", \n";
+                    }
+                    if (!obj5.getString("line3").contains("PO B") && !obj5.getString("line3").isEmpty()) {
+                        Log.d(TAG, "getParkDetailJSON: ");
+                        address = address + obj5.getString("line3") + ", \n";
+                    }
+                    address = address + obj5.getString("city") + ", ";
+                    address = address + obj5.getString("stateCode") + ", ";
                     address = address+obj5.getString("postalCode");
                     addressObjects.add(new AddressObject(address,type));
-
                 }
+                //Log.d(TAG, "getParkDetailJSON: "+addressObjects.size());
 
                 JSONArray imageArray = obj.getJSONArray("images");
                 ArrayList<String> imageUrls = new ArrayList<>();
@@ -259,22 +318,25 @@ public class Parks_Helper {
                     JSONObject obj6 = imageArray.getJSONObject(e);
                     imageUrls.add(obj6.getString("url"));
                 }
-
+                Log.d(TAG, "getParkDetailJSON: "+imageUrls.size());
 
 
 
                 DetailParkObject parkObject = new DetailParkObject(parkName,parkUrl,description,hours,fees,activities,parkId,addressObjects,imageUrls);
+                Log.d(TAG, "getParkDetailJSON: done");
                 tempDetailParkArray.add(parkObject);
             }
         }catch ( JSONException e){
             e.printStackTrace();
+            Log.d(TAG, "getParkDetailJSON: "+e);
         }
     }
 
     private String getNetworkData(){
         String data = "";
         try {
-            URL url = new URL(parksURL);
+            Log.d(TAG, "getNetworkData: "+jsonURL);
+            URL url = new URL(jsonURL);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.connect();
             InputStream is = connection.getInputStream();
@@ -284,6 +346,7 @@ public class Parks_Helper {
 
         }catch (IOException e){
             e.printStackTrace();
+            Log.d(TAG, "getNetworkData: "+e);
         }
         return data;
     }

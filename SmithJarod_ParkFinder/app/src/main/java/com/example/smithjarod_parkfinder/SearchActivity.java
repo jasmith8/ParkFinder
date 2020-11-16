@@ -1,10 +1,15 @@
 package com.example.smithjarod_parkfinder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smithjarod_parkfinder.fragments.NationalFragment;
@@ -21,7 +26,7 @@ public class SearchActivity extends AppCompatActivity {
     String typeOfList;
 
     TabLayout tabLayout;
-    TabLayout.Tab tabLayoutTab;
+    //TabLayout.Tab tabLayoutTab;
     Context context = this;
     int selectedTab;
     int defaultTab = 0;
@@ -30,6 +35,7 @@ public class SearchActivity extends AppCompatActivity {
 
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
     Parks_Helper parks_helper = new Parks_Helper();
+    boolean isPark = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +46,12 @@ public class SearchActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: "+typeOfList);
         if(typeOfList.contains(MainActivity.PARKS)){
             Log.d(TAG, "onCreate: get parks");
-            parkObjects =  parkObjects = parks_helper.parkObjects(true, this,"ALL");
+            isPark = true;
+            parkObjects = parks_helper.parkObjects(isPark, this,"ALL");
         } else {
             Log.d(TAG, "onCreate: get camps");
-            parkObjects =  parkObjects = parks_helper.parkObjects(false, this,"ALL");
+            isPark = false;
+            parkObjects = parks_helper.parkObjects(isPark, this,"ALL");
         }
         getSupportFragmentManager().executePendingTransactions();
 
@@ -87,7 +95,7 @@ public class SearchActivity extends AppCompatActivity {
     void openNationalView(){
         Log.d(TAG, "openNationalView: ");
         getSupportFragmentManager().beginTransaction().
-                replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects)).commit();
+                replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects, isPark)).commit();
     }
 
     void openStateView(){
@@ -96,5 +104,18 @@ public class SearchActivity extends AppCompatActivity {
                 replace(R.id.mainFrame, StateFragment.newInstance(parkObjects)).commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //TODO SEND TO FAV LIST
+        Intent intent= new Intent(this, FavoritesActivity.class);
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
+    }
 }

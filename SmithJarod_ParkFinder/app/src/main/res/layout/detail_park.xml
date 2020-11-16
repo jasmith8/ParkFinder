@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,8 +9,9 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="116dp"
-        tools:layout_editor_absoluteY="193dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,38 +19,57 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/parkName"
+                android:id="@+id/theParkName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/purple_500"
+                android:elegantTextHeight="false"
+                android:padding="8dp"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textStyle="bold" />
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="22sp" />
 
             <TextView
                 android:id="@+id/locationTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/location"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/locationDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                android:clickable="true"
+                android:focusable="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black" />
+
+            <!--            <ListView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginLeft="8dp"-->
+            <!--                android:layout_marginRight="8dp"/>-->
 
             <TextView
                 android:id="@+id/descriptionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/description"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
@@ -59,16 +78,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:paddingTop="10dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/hoursTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/hours"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
@@ -77,56 +99,64 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:paddingTop="10dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/feesTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/fees"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/feesDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/activitiesTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/activities"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/activitiesDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/photosTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:background="@color/purple_200"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/photos"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <com.synnapps.carouselview.CarouselView
-                android:paddingTop="10dp"
                 android:id="@+id/carouselView"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
@@ -135,7 +165,7 @@
                 app:radius="6dp"
                 app:slideInterval="3000"
                 app:strokeColor="#FF777777"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
