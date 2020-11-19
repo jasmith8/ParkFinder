@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 public class StateFragment extends Fragment  implements AdapterView.OnItemSelectedListener, LocationListener {
     public static final String TAG = "TAG.StateFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
+    public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
+
 
 
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
@@ -37,12 +39,14 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
     String[] states;
     String[] stateCodes;
     String[] mapOrList;
+    boolean isPark;
     ArrayList<ParkObject> filteredList = new ArrayList<>();
 
-    public static StateFragment newInstance(ArrayList<ParkObject> objects) {
+    public static StateFragment newInstance(ArrayList<ParkObject> objects, boolean isPark) {
 
         Bundle args = new Bundle();
         args.putSerializable(NationalFragment.ARRAY,objects);
+        args.putBoolean(ISPARK, isPark);
         StateFragment fragment = new StateFragment();
         fragment.setArguments(args);
         return fragment;
@@ -66,6 +70,8 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         stateSelected = states[0];
         listSelected = true;
         parkObjects = (ArrayList<ParkObject>) getArguments().getSerializable(ARRAY);
+        isPark = getArguments().getBoolean(ISPARK);
+
         Log.d(TAG, "onActivityCreated: "+parkObjects.size());
         stateSpinner= getView().findViewById(R.id.stateSpinner);
         ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1,states);
@@ -124,7 +130,7 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
 
     void openList(){
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.stateFrame, StateListFragment.newInstance(filteredList)).commit();
+                .replace(R.id.stateFrame, StateListFragment.newInstance(filteredList, isPark)).commit();
     }
 
     @Override

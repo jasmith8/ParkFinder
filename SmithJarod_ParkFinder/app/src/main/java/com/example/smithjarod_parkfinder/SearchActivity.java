@@ -34,6 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
+    ArrayList<ParkObject> campObjects = new ArrayList<>();
     Parks_Helper parks_helper = new Parks_Helper();
     boolean isPark = true;
 
@@ -51,7 +52,7 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "onCreate: get camps");
             isPark = false;
-            parkObjects = parks_helper.parkObjects(isPark, this,"ALL");
+            campObjects = parks_helper.parkObjects(isPark, this,"ALL");
         }
         getSupportFragmentManager().executePendingTransactions();
 
@@ -94,14 +95,25 @@ public class SearchActivity extends AppCompatActivity {
 
     void openNationalView(){
         Log.d(TAG, "openNationalView: ");
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects, isPark)).commit();
+        if (isPark) {
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainFrame, NationalFragment.newInstance(parkObjects, isPark)).commit();
+        } else {
+            Log.d(TAG, "openNationalView: "+campObjects.size());
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainFrame, NationalFragment.newInstance(campObjects, isPark)).commit();
+        }
     }
 
     void openStateView(){
         Log.d(TAG, "openStateView: ");
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.mainFrame, StateFragment.newInstance(parkObjects)).commit();
+        if (isPark) {
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainFrame, StateFragment.newInstance(parkObjects, isPark)).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainFrame, StateFragment.newInstance(campObjects,isPark)).commit();
+        }
     }
 
     @Override

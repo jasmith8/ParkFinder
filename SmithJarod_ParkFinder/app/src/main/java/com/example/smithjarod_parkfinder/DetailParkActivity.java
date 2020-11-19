@@ -1,10 +1,13 @@
 package com.example.smithjarod_parkfinder;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 public class DetailParkActivity extends AppCompatActivity {
@@ -42,12 +46,14 @@ public class DetailParkActivity extends AppCompatActivity {
 
     String typeOfDetail=null;
     String parkId;
+    String address;
     TextView parkName;
     TextView locationDetail;
     TextView descriptionDetail;
     TextView hoursDetail;
     TextView feesDetail;
     TextView activitiesDetail;
+    TextView activitiesTitle;
     CarouselView carouselView;
 
     ArrayList<DetailParkObject> parkObjects;
@@ -77,6 +83,7 @@ public class DetailParkActivity extends AppCompatActivity {
         hoursDetail = findViewById(R.id.hoursDetail);
         feesDetail = findViewById(R.id.feesDetail);
         activitiesDetail = findViewById(R.id.activitiesDetail);
+        activitiesTitle = findViewById(R.id.activitiesTitle);
         carouselView = findViewById(R.id.carouselView);
 
         ImageListener imageListener = new ImageListener() {
@@ -97,8 +104,12 @@ public class DetailParkActivity extends AppCompatActivity {
                 String type = obj.getType();
                 if (type.equals("Physical")){
                     locationDetail.setText(obj.getAddress());
+
                 }
             }
+            Log.d(TAG, "onCreate: address: "+locationDetail.getText().toString());
+            address = locationDetail.getText().toString();
+
             descriptionDetail.setText(parkObjects.get(0).getDescriptionDetailText());
             hoursDetail.setText(parkObjects.get(0).getHoursDetailText());
             feesDetail.setText(parkObjects.get(0).getFeesDetailText());
@@ -112,10 +123,36 @@ public class DetailParkActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: get camps");
             isPark = false;
             parkObjects = parks_helper.detailParkObjects(false, this,parkId);
-        }
-        Log.d(TAG, "onCreate: "+parkObjects.size());
-        //Log.d(TAG, "onCreate: "+parkObjects.get(0).getParkNameText());
+            parkName.setText(parkObjects.get(0).getParkNameText());
+            ArrayList<AddressObject> addressObjects = parkObjects.get(0).getAddresses();
+            for (AddressObject obj: addressObjects){
+                String type = obj.getType();
+                if (type.equals("Physical")){
+                    locationDetail.setText(obj.getAddress());
+                }
+            }
+            Log.d(TAG, "onCreate: address: "+locationDetail.getText().toString());
+            address = locationDetail.getText().toString();
+            descriptionDetail.setText(parkObjects.get(0).getDescriptionDetailText());
+            hoursDetail.setText(parkObjects.get(0).getHoursDetailText());
+            feesDetail.setText(parkObjects.get(0).getFeesDetailText());
+            activitiesTitle.setText("Reservation Info:");
+            activitiesDetail.setText(parkObjects.get(0).getActivitiesDetailText());
+            imageArray = parkObjects.get(0).getImageArray();
+            carouselView.setPageCount(imageArray.size());
+            carouselView.setImageListener(imageListener);
 
+
+        }
+        Uri mapUri = Uri.parse("google.navigation:q=a+"+Uri.encode(address));
+        Intent launchMap = new Intent(Intent.ACTION_VIEW, mapUri);
+        launchMap.setPackage("com.google.android.apps.maps");
+        locationDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(launchMap);
+            }
+        });
 
         //DATABASE
         mDatabase = FirebaseDatabase.getInstance().getReference();

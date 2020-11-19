@@ -29,15 +29,17 @@ public class StateListFragment extends ListFragment implements AdapterView.OnIte
     public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
     Parks_Helper parks_helper = new Parks_Helper();
-    boolean isPark = true;
+    boolean isPark ;
     public StateListFragment(){
 
     }
 
-    public static StateListFragment newInstance(ArrayList<ParkObject> objects) {
+    public static StateListFragment newInstance(ArrayList<ParkObject> objects, boolean isPark) {
 
         Bundle args = new Bundle();
+        Log.d(TAG, "newInstance: "+objects.size());
         args.putSerializable(NationalFragment.ARRAY,objects);
+        args.putBoolean(ISPARK, isPark);
         StateListFragment fragment = new StateListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -56,6 +58,7 @@ public class StateListFragment extends ListFragment implements AdapterView.OnIte
         //TODO: LOAD THE ARRAY
         parkObjects = new ArrayList<>();
         parkObjects = (ArrayList<ParkObject>)getArguments().getSerializable(ARRAY) ;
+        isPark = getArguments().getBoolean(ISPARK);
         Log.d(TAG, "onActivityCreated: "+parkObjects.size());
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1,parkObjects){
@@ -77,6 +80,7 @@ public class StateListFragment extends ListFragment implements AdapterView.OnIte
                 Log.d(TAG, "onItemClick: ");
                 String parkId = parkObjects.get(position).getParkId();
                 Intent intent= new Intent(getContext(), DetailParkActivity.class);
+                Log.d(TAG, "onItemClick: ispark "+isPark);
                 if (isPark){
                     intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
                 } else {
@@ -86,6 +90,7 @@ public class StateListFragment extends ListFragment implements AdapterView.OnIte
                 startActivity(intent);
             }
         });
+        lv.setEmptyView(getView().findViewById(android.R.id.empty));
     }
 
     @Override
