@@ -28,6 +28,7 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
     public static final String TAG = "TAG.StateFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
     public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
+    public static final String STATE_CODE = "com.example.smithjarod_parkfinder.fragments.STATE_CODE";
 
 
 
@@ -120,10 +121,13 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
     }
 
     void openMap(){
-        MapFragment mapFragment = MapFragment.newInstance();
+        MapsFragment mapFragment =  new MapsFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARRAY,filteredList);
+        bundle.putString(STATE_CODE, filteredList.get(0).getState());
+        bundle.putBoolean(ISPARK,isPark);
         mapFragment.setArguments(bundle);
+
         getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.mapFrame,mapFragment).commit();
     }

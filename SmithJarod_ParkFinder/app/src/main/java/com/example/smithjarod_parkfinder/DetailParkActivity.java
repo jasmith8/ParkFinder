@@ -92,7 +92,7 @@ public class DetailParkActivity extends AppCompatActivity {
                 Picasso.get().load(imageArray.get(position)).resize(400,400).onlyScaleDown().into(imageView);
             }
         };
-
+        Log.d(TAG, "onCreate: "+typeOfDetail);
         if(typeOfDetail.contains(DetailParkActivity.PARKS)){
             Log.d(TAG, "onCreate: get parks");
             parkObjects = parks_helper.detailParkObjects(true, this,parkId);

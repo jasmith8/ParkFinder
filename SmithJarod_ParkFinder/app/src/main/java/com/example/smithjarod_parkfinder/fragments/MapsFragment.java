@@ -1,13 +1,17 @@
 package com.example.smithjarod_parkfinder.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,16 +20,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback,
+public class MapsFragment extends MapFragment implements OnMapReadyCallback,
         GoogleMap.InfoWindowAdapter, GoogleMap.OnInfoWindowClickListener {
     public static final String TAG = "TAG.MapsFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
+    public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
+    public static final String STATE_CODE = "com.example.smithjarod_parkfinder.fragments.STATE_CODE";
 
     private GoogleMap mMap;
     private double lat=0;
     private double lon=0;
     private int markerCounter=0;
     private ArrayList<ParkObject> parkObjects = new ArrayList<>();
+    boolean isPark;
+    String stateCode;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
@@ -33,17 +41,35 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         return super.onCreateView(layoutInflater, viewGroup, bundle);
     }
 
-    public static MapsFragment newInstance() {
-        Bundle args = new Bundle();
+    public static MapsFragment newInstance(ArrayList<ParkObject> _obj, boolean _isPark, String _stateCode) {
+        //Log.d(TAG, "newInstance: ");
         MapsFragment fragment = new MapsFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARRAY,_obj);
+        args.putBoolean(ISPARK, _isPark);
+        args.putString(STATE_CODE, _stateCode);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d(TAG, "onAttach: ");
     }
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         Log.d(TAG, "onCreate: ");
+        Bundle getBundle = getArguments();
+        parkObjects = (ArrayList<ParkObject>) getBundle.getSerializable(ARRAY);
+        Log.d(TAG, "onCreate: "+parkObjects.size());
+        isPark = getBundle.getBoolean(ISPARK);
+        Log.d(TAG, "onCreate: "+isPark);
+        stateCode = getBundle.getString(STATE_CODE);
+        Log.d(TAG, "onCreate: "+stateCode);
+
     }
 
 

@@ -15,7 +15,8 @@
     <string name="remove">Remove</string>
     <string name="_added">Added</string>
     <string name="_removed">Removed</string>
-    <string name="empty_list_try_another">Empty List, try another!</string>
+    <string name="empty_list_try_another">Empty List...</string>
+    <string name="loading">Loading</string>
 
     <string-array name="listOrMapsArray">
         <item>List</item>
