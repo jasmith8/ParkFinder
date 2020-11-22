@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 public class DetailParkObject {
 
-    String parkNameText;
-    String parkUrlText;
-    String descriptionDetailText;
-    String hoursDetailText;
-    String feesDetailText;
-    String activitiesDetailText;
-    String parkId;
-    ArrayList<AddressObject> addresses;
+    final String parkNameText;
+    final String parkUrlText;
+    final String descriptionDetailText;
+    final String hoursDetailText;
+    final String feesDetailText;
+    final String activitiesDetailText;
+    final String parkId;
+    final ArrayList<AddressObject> addresses;
 
-    ArrayList<String> imageArray;
+    final ArrayList<String> imageArray;
 
     public DetailParkObject(String parkNameText,
                             String parkUrlText,
@@ -38,9 +38,11 @@ public class DetailParkObject {
     public String getParkNameText(){
         return parkNameText;
     }
-    public String getParkUrlText(){
-        return parkUrlText;
-    }
+// --Commented out by Inspection START (11/22/20, 3:01 PM):
+//    public String getParkUrlText(){
+//        return parkUrlText;
+//    }
+// --Commented out by Inspection STOP (11/22/20, 3:01 PM)
     public String getDescriptionDetailText(){
         return descriptionDetailText;
     }

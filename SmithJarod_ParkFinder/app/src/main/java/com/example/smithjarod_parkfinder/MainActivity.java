@@ -9,15 +9,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -48,16 +45,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         parkButton = (Button) this.findViewById(R.id.parks);
         campButton = (Button) this.findViewById(R.id.camps);
-        parkButton.setOnClickListener(this::onClick);
-        campButton.setOnClickListener(this::onClick);
+        parkButton.setOnClickListener(this);
+        campButton.setOnClickListener(this);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            Toast.makeText(this,"Logged In",Toast.LENGTH_SHORT).show();
-        } else {
+        if (user == null) {
             firebaseLogin();
-            Toast.makeText(this,"Logged In",Toast.LENGTH_SHORT).show();
 
         }
+        Toast.makeText(this,"Logged In",Toast.LENGTH_SHORT).show();
 
     }
 
@@ -91,10 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    void checkPermissions(){
-
-    }
-
     private boolean hasPermissions() {
         boolean hasLoc = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
@@ -109,12 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean hasState = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED;
 
-        boolean allTrue = true;
-        if (hasLoc && hasCouLoc && hasInternet && hasNetwork && hasStorage &&hasState){
-            allTrue = true;
-        } else {
-            allTrue = false;
-        }
+        boolean allTrue;
+        allTrue = hasLoc && hasCouLoc && hasInternet && hasNetwork && hasStorage && hasState;
 
         return allTrue;
     }

@@ -18,14 +18,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.smithjarod_parkfinder.Map_Helper;
 import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.example.smithjarod_parkfinder.R;
-import com.google.android.gms.maps.MapFragment;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class StateFragment extends Fragment  implements AdapterView.OnItemSelectedListener, LocationListener {
     public static final String TAG = "TAG.StateFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
@@ -77,12 +76,12 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
 
         Log.d(TAG, "onActivityCreated: "+parkObjects.size());
         stateSpinner= getView().findViewById(R.id.stateSpinner);
-        ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1,states);
+        ArrayAdapter<String> statesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, states);
         stateSpinner.setAdapter(statesAdapter);
         stateSpinner.setOnItemSelectedListener(this);
 
         mapOrListSpinner= getView().findViewById(R.id.mapOrListSpinner);
-        ArrayAdapter<String> mapOrListAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1,mapOrList);
+        ArrayAdapter<String> mapOrListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, mapOrList);
         mapOrListSpinner.setAdapter(mapOrListAdapter);
         mapOrListSpinner.setOnItemSelectedListener(this);
 

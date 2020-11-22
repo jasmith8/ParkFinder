@@ -1,23 +1,14 @@
 package com.example.smithjarod_parkfinder.objects;
 
-import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
-import android.util.Log;
-
-import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
 public class ParkObject implements Serializable {
 
-    String parkName;
-    String parkStates;
-    String parkId;
-    String latitude;
-    String longitude;
+    final String parkName;
+    final String parkStates;
+    final String parkId;
+    final String latitude;
+    final String longitude;
     //String address;
 
     public ParkObject(String parkName, String parkStates, String parkId, String latitude, String longitude) {

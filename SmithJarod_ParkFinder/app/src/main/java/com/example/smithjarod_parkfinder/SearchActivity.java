@@ -27,15 +27,15 @@ public class SearchActivity extends AppCompatActivity {
 
     TabLayout tabLayout;
     //TabLayout.Tab tabLayoutTab;
-    Context context = this;
+    final Context context = this;
     int selectedTab;
-    int defaultTab = 0;
+    final int defaultTab = 0;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
     ArrayList<ParkObject> parkObjects = new ArrayList<>();
     ArrayList<ParkObject> campObjects = new ArrayList<>();
-    Parks_Helper parks_helper = new Parks_Helper();
+    final Parks_Helper parks_helper = new Parks_Helper();
     boolean isPark = true;
 
     @Override
@@ -98,7 +98,7 @@ public class SearchActivity extends AppCompatActivity {
 
         }else {
             editor.putInt(NATIONAL_STATE_KEY,selectedTab);
-            openStateView();;
+            openStateView();
         }
     }
 

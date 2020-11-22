@@ -5,9 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import com.example.smithjarod_parkfinder.objects.AddressObject;
 import com.example.smithjarod_parkfinder.objects.DetailParkObject;
@@ -24,7 +21,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -34,8 +30,8 @@ public class Parks_Helper {
     String json;
     boolean _isPark;
     String _parkId;
-    String parksURL = "https://developer.nps.gov/api/v1/parks?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=fullName";
-    String campsURL = "https://developer.nps.gov/api/v1/campgrounds?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=name";
+    final String parksURL = "https://developer.nps.gov/api/v1/parks?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=fullName";
+    final String campsURL = "https://developer.nps.gov/api/v1/campgrounds?api_key=ZASYXugeyaioSMOW67WfUMn9hOf0X1nzdIFbUAwZ&limit=1000&sort=name";
     ArrayList<ParkObject> tempParkArray = new ArrayList<>();
     ArrayList<ParkObject> tempCampArray = new ArrayList<>();
     ArrayList<DetailParkObject> tempDetailParkArray = new ArrayList<>();
@@ -44,7 +40,7 @@ public class Parks_Helper {
 
         _isPark = isPark;
         _parkId = parkId;
-        if (isPark == true){
+        if (isPark){
             jsonURL = parksURL;
             tempParkArray = getList(context);
 
@@ -56,20 +52,10 @@ public class Parks_Helper {
 
 
         if (isPark) {
-            Collections.sort(tempParkArray, new Comparator<ParkObject>(){
-                @Override
-                public int compare(ParkObject o1, ParkObject o2) {
-                    return o1.getState().compareToIgnoreCase(o2.getState());
-                }
-            });
+            Collections.sort(tempParkArray, (o1, o2) -> o1.getState().compareToIgnoreCase(o2.getState()));
             return tempParkArray;
         } else{
-            Collections.sort(tempCampArray, new Comparator<ParkObject>(){
-                @Override
-                public int compare(ParkObject o1, ParkObject o2) {
-                    return o1.getState().compareToIgnoreCase(o2.getState());
-                }
-            });
+            Collections.sort(tempCampArray, (o1, o2) -> o1.getState().compareToIgnoreCase(o2.getState()));
             return tempCampArray;
         }
     }
@@ -77,17 +63,15 @@ public class Parks_Helper {
     public ArrayList<DetailParkObject> detailParkObjects(Boolean isPark, Context context, String parkId){
         _isPark = isPark;
         _parkId = parkId;
-        if (isPark == true){
+        if (isPark){
             Log.d(TAG, "detailParkObjects: ");
             jsonURL = parksURL+"&id="+parkId;
-            Log.d(TAG, "detailParkObjects: "+jsonURL);
-            tempDetailParkArray = getDetailParkList(context);
 
         } else {
             jsonURL = campsURL+"&id="+parkId;
-            Log.d(TAG, "detailParkObjects: "+jsonURL);
-            tempDetailParkArray = getDetailParkList(context);
         }
+        Log.d(TAG, "detailParkObjects: "+jsonURL);
+        tempDetailParkArray = getDetailParkList(context);
         Log.d(TAG, "detailParkObjects: "+tempDetailParkArray.size());
         Log.d(TAG, "detailParkObjects: "+jsonURL);
         return tempDetailParkArray;
@@ -128,24 +112,16 @@ public class Parks_Helper {
 
             }
 
-        } else {
         }
     }
 
 
-
-    private String grabData(){
-        String data = "";
-        data = getNetworkData();
-        json = data;
-        return data;
-    }
-
+    @SuppressWarnings("deprecation")
     private class DataTask extends AsyncTask<String,Integer,String>{
 
         @Override
         protected String doInBackground(String... strings) {
-            String data = "";
+            String data;
             data = getNetworkData();
             json = data;
             Log.d(TAG, "doInBackground: "+_parkId);
@@ -210,15 +186,13 @@ public class Parks_Helper {
 
                 JSONArray addresses = obj.getJSONArray("addresses");
                 for (int j = 0; j<addresses.length();j++){
-                    Log.d(TAG, "getCampJSON: "+j);
                     JSONObject obj2 = addresses.getJSONObject(j);
                     String stateCode = obj2.getString("stateCode");
                     String type = obj2.getString("type");
-                    Log.d(TAG, "getCampJSON: type: "+type);
                     if (type.equals("Physical")){
                         ParkObject parkObject = new ParkObject(parkName,stateCode,parkId,latitude,longitude);
                         tempCampArray.add(parkObject);
-                        Log.d(TAG, "getCampJSON: added"+parkName);
+                        Log.d(TAG, "getCampJSON: added "+parkName);
                     }
                 }
             }
@@ -245,8 +219,7 @@ public class Parks_Helper {
 
                 Log.d(TAG, "getParkJSON: "+parkName);
                 for(String code:parkStates){
-                    String parkStateCode = code;
-                    ParkObject parkObject = new ParkObject(parkName,parkStateCode,parkId,latitude,longitude);
+                    ParkObject parkObject = new ParkObject(parkName, code,parkId,latitude,longitude);
                     tempParkArray.add(parkObject);
                 }
             }
@@ -269,38 +242,38 @@ public class Parks_Helper {
                 String parkUrl = obj.getString("url");
                 String description = obj.getString("description");
                 JSONArray hoursArray = obj.getJSONArray("operatingHours");
-                String hours="";
+                StringBuilder hours= new StringBuilder();
                 for (int k =0;k<hoursArray.length();k++){
                     JSONObject obj2 = hoursArray.getJSONObject(k);
                     if (k!=0){
-                        hours=hours+"\n";
+                        hours.append("\n");
                     }
-                    hours = obj2.getString("name")+"\n";
+                    hours = new StringBuilder(obj2.getString("name") + "\n");
                     JSONObject standardHoursObj = obj2.getJSONObject("standardHours");
-                    hours = hours+"Monday: "+standardHoursObj.getString("monday")+"\n";
-                    hours = hours+"Tuesday: "+standardHoursObj.getString("tuesday")+"\n";
-                    hours = hours+"Wednesday: "+standardHoursObj.getString("wednesday")+"\n";
-                    hours = hours+"Thursday: "+standardHoursObj.getString("thursday")+"\n";
-                    hours = hours+"Friday: "+standardHoursObj.getString("friday")+"\n";
-                    hours = hours+"Saturday: "+standardHoursObj.getString("saturday")+"\n";
-                    hours = hours+"Sunday: "+standardHoursObj.getString("sunday");
+                    hours.append("Monday: ").append(standardHoursObj.getString("monday")).append("\n");
+                    hours.append("Tuesday: ").append(standardHoursObj.getString("tuesday")).append("\n");
+                    hours.append("Wednesday: ").append(standardHoursObj.getString("wednesday")).append("\n");
+                    hours.append("Thursday: ").append(standardHoursObj.getString("thursday")).append("\n");
+                    hours.append("Friday: ").append(standardHoursObj.getString("friday")).append("\n");
+                    hours.append("Saturday: ").append(standardHoursObj.getString("saturday")).append("\n");
+                    hours.append("Sunday: ").append(standardHoursObj.getString("sunday"));
                 }
                 JSONArray feesArray = obj.getJSONArray("entranceFees");
-                String fees = "";
+                StringBuilder fees = new StringBuilder();
                 for (int p=0;p<feesArray.length();p++){
                     JSONObject obj3 = feesArray.getJSONObject(p);
                     if (p!=0){
-                        fees = fees+"\n";
+                        fees.append("\n");
                     }
-                    fees  = "Title: "+obj3.getString("title")+"\n";
-                    fees = fees+"Cost: $"+obj3.getString("cost")+"\n";
-                    fees = fees+"Description: "+obj3.getString("description");
+                    fees = new StringBuilder("Title: " + obj3.getString("title") + "\n");
+                    fees.append("Cost: $").append(obj3.getString("cost")).append("\n");
+                    fees.append("Description: ").append(obj3.getString("description"));
                 }
                 JSONArray activitiesArray = obj.getJSONArray("activities");
-                String activities = "";
+                StringBuilder activities = new StringBuilder();
                 for (int q=0; q<activitiesArray.length();q++){
                     JSONObject obj4 = activitiesArray.getJSONObject(q);
-                    activities = activities+obj4.getString("name")+", ";
+                    activities.append(obj4.getString("name")).append(", ");
                 }
                 String parkId = obj.getString("id");
                 JSONArray addressArray = obj.getJSONArray("addresses");
@@ -337,7 +310,7 @@ public class Parks_Helper {
 
 
 
-                DetailParkObject parkObject = new DetailParkObject(parkName,parkUrl,description,hours,fees,activities,parkId,addressObjects,imageUrls);
+                DetailParkObject parkObject = new DetailParkObject(parkName,parkUrl,description, hours.toString(), fees.toString(), activities.toString(),parkId,addressObjects,imageUrls);
                 Log.d(TAG, "getParkDetailJSON: done");
                 tempDetailParkArray.add(parkObject);
             }
@@ -359,32 +332,32 @@ public class Parks_Helper {
                 String parkUrl = obj.getString("url");
                 String description = obj.getString("description");
                 JSONArray hoursArray = obj.getJSONArray("operatingHours");
-                String hours="";
+                StringBuilder hours= new StringBuilder();
                 for (int k =0;k<hoursArray.length();k++){
                     JSONObject obj2 = hoursArray.getJSONObject(k);
                     if (k!=0){
-                        hours=hours+"\n";
+                        hours.append("\n");
                     }
-                    hours = obj2.getString("name")+"\n";
+                    hours = new StringBuilder(obj2.getString("name") + "\n");
                     JSONObject standardHoursObj = obj2.getJSONObject("standardHours");
-                    hours = hours+"Monday: "+standardHoursObj.getString("monday")+"\n";
-                    hours = hours+"Tuesday: "+standardHoursObj.getString("tuesday")+"\n";
-                    hours = hours+"Wednesday: "+standardHoursObj.getString("wednesday")+"\n";
-                    hours = hours+"Thursday: "+standardHoursObj.getString("thursday")+"\n";
-                    hours = hours+"Friday: "+standardHoursObj.getString("friday")+"\n";
-                    hours = hours+"Saturday: "+standardHoursObj.getString("saturday")+"\n";
-                    hours = hours+"Sunday: "+standardHoursObj.getString("sunday");
+                    hours.append("Monday: ").append(standardHoursObj.getString("monday")).append("\n");
+                    hours.append("Tuesday: ").append(standardHoursObj.getString("tuesday")).append("\n");
+                    hours.append("Wednesday: ").append(standardHoursObj.getString("wednesday")).append("\n");
+                    hours.append("Thursday: ").append(standardHoursObj.getString("thursday")).append("\n");
+                    hours.append("Friday: ").append(standardHoursObj.getString("friday")).append("\n");
+                    hours.append("Saturday: ").append(standardHoursObj.getString("saturday")).append("\n");
+                    hours.append("Sunday: ").append(standardHoursObj.getString("sunday"));
                 }
                 JSONArray feesArray = obj.getJSONArray("fees");
-                String fees = "";
+                StringBuilder fees = new StringBuilder();
                 for (int p=0;p<feesArray.length();p++){
                     JSONObject obj3 = feesArray.getJSONObject(p);
                     if (p!=0){
-                        fees = fees+"\n";
+                        fees.append("\n");
                     }
-                    fees  = "Title: "+obj3.getString("title")+"\n";
-                    fees = fees+"Cost: $"+obj3.getString("cost")+"\n";
-                    fees = fees+"Description: "+obj3.getString("description");
+                    fees = new StringBuilder("Title: " + obj3.getString("title") + "\n");
+                    fees.append("Cost: $").append(obj3.getString("cost")).append("\n");
+                    fees.append("Description: ").append(obj3.getString("description"));
                 }
                 String reservationInfo = obj.getString("reservationInfo");
                 String parkId = obj.getString("id");
@@ -420,7 +393,7 @@ public class Parks_Helper {
 
 
 
-                DetailParkObject parkObject = new DetailParkObject(parkName,parkUrl,description,hours,fees,reservationInfo,parkId,addressObjects,imageUrls);
+                DetailParkObject parkObject = new DetailParkObject(parkName,parkUrl,description, hours.toString(), fees.toString(),reservationInfo,parkId,addressObjects,imageUrls);
                 Log.d(TAG, "getParkDetailJSON: done");
                 tempDetailParkArray.add(parkObject);
             }

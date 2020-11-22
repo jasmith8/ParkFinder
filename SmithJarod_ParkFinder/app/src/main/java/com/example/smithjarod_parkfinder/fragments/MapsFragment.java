@@ -21,7 +21,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -29,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class MapsFragment extends MapFragment implements OnMapReadyCallback,
         GoogleMap.InfoWindowAdapter, GoogleMap.OnInfoWindowClickListener {
     public static final String TAG = "TAG.MapsFragment";
@@ -39,15 +39,11 @@ public class MapsFragment extends MapFragment implements OnMapReadyCallback,
     private GoogleMap mMap;
     private double getGetStateLat=0;
     private double getStateLon=0;
-    private double addLat=0;
-    private double addlon=0;
     private int markerCounter=0;
-    private ArrayList<ParkObject> parkObjects = new ArrayList<>();
-    private ArrayList<StateObject> stateObjects = new ArrayList<>();
     private ArrayList<ParkObject> filteredObjects = new ArrayList<>();
     boolean isPark;
     String stateCode;
-    Map_Helper helper = new Map_Helper();
+    final Map_Helper helper = new Map_Helper();
     LatLng latLng;
     Context context;
 
@@ -57,17 +53,6 @@ public class MapsFragment extends MapFragment implements OnMapReadyCallback,
         Log.d(TAG, "onCreateView: ");
         viewGroup.removeAllViews();
         return super.onCreateView(layoutInflater, viewGroup, bundle);
-    }
-
-    public static MapsFragment newInstance(ArrayList<ParkObject> _obj, boolean _isPark, String _stateCode) {
-        //Log.d(TAG, "newInstance: ");
-        MapsFragment fragment = new MapsFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARRAY,_obj);
-        args.putBoolean(ISPARK, _isPark);
-        args.putString(STATE_CODE, _stateCode);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -83,8 +68,8 @@ public class MapsFragment extends MapFragment implements OnMapReadyCallback,
         Log.d(TAG, "onCreate: ");
         context = getContext();
         Bundle getBundle = getArguments();
-        parkObjects = (ArrayList<ParkObject>) getBundle.getSerializable(ARRAY);
-        stateObjects = helper.getStateInfo();
+        ArrayList<ParkObject> parkObjects = (ArrayList<ParkObject>) getBundle.getSerializable(ARRAY);
+        ArrayList<StateObject> stateObjects = helper.getStateInfo();
         isPark = getBundle.getBoolean(ISPARK);
         stateCode = getBundle.getString(STATE_CODE);
         for (StateObject obj: stateObjects){
@@ -148,29 +133,26 @@ public class MapsFragment extends MapFragment implements OnMapReadyCallback,
         Log.d(TAG, "addMapLocations: "+filteredObjects.size());
         for(ParkObject obj:filteredObjects){
             Log.d(TAG, "addMapLocations: "+obj.getName());
-            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                @Override
-                public void onInfoWindowClick(Marker marker) {
-                    String tagString = ""+marker.getTag();
-                    int tagInt = Integer.parseInt(tagString);
-                    Log.d(TAG, "onInfoWindowClick: ");
-                    //open detail screen from here
-                    String parkId = obj.getParkId();
-                    Intent intent= new Intent(context, DetailParkActivity.class);
-                    Log.d(TAG, "onItemClick: ispark "+isPark);
-                    if (isPark){
-                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
-                    } else {
-                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
-                    }
-                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
-                    startActivity(intent);
+            mMap.setOnInfoWindowClickListener(marker -> {
+                String tagString = ""+marker.getTag();
+                int tagInt = Integer.parseInt(tagString);
+                Log.d(TAG, "onInfoWindowClick: ");
+                //open detail screen from here
+                String parkId = obj.getParkId();
+                Intent intent= new Intent(context, DetailParkActivity.class);
+                Log.d(TAG, "onItemClick: ispark "+isPark);
+                if (isPark){
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+                } else {
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
                 }
+                intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+                startActivity(intent);
             });
 
-            addLat = Double.parseDouble(obj.getLatitude());
-            addlon = Double.parseDouble(obj.getLongitude());
-            LatLng latLng = new LatLng(addLat,addlon);
+            double addLat = Double.parseDouble(obj.getLatitude());
+            double addlon = Double.parseDouble(obj.getLongitude());
+            LatLng latLng = new LatLng(addLat, addlon);
             Log.d(TAG, "addMapLocations: "+latLng);
             Marker marker = mMap.addMarker(new MarkerOptions().title(obj.getName()).position(latLng));
             marker.setTag(markerCounter);

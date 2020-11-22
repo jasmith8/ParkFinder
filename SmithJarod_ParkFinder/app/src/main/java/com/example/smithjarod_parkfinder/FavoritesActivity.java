@@ -2,12 +2,10 @@ package com.example.smithjarod_parkfinder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -28,20 +26,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class FavoritesActivity extends AppCompatActivity {
     public static final String TAG = "TAG.FavoritesActivity";
-    public static final String NATIONAL_STATE="com.example.smithjarod_parkfinder.NATIONAL_STATE";
-    public static final String NATIONAL_STATE_KEY="com.example.smithjarod_parkfinder.NATIONAL_STATE_KEY";
-    String _name;
-    boolean _isPark;
-    String _idCode;
-    ArrayList<FavoriteObject> favoriteObjects = new ArrayList<>();
-    private DatabaseReference mDatabase;
+    final ArrayList<FavoriteObject> favoriteObjects = new ArrayList<>();
     FirebaseUser user;
     String userID;
-    Context context = this;
+    final Context context = this;
     ListView lv;
     ConstraintLayout cs;
 
@@ -55,10 +47,12 @@ public class FavoritesActivity extends AppCompatActivity {
         message.setText(R.string.loading);
         user = FirebaseAuth.getInstance().getCurrentUser();
         userID = user.getUid();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
 
+            @SuppressWarnings("rawtypes")
             ArrayAdapter adapter;
+            @SuppressWarnings("rawtypes")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren()){
@@ -89,20 +83,17 @@ public class FavoritesActivity extends AppCompatActivity {
                     }
                 };
                 lv.setAdapter(adapter);
-                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String parkId = favoriteObjects.get(position).idCode();
-                        boolean is_park = favoriteObjects.get(position).isPark();
-                        Intent intent= new Intent(context, DetailParkActivity.class);
-                        if (is_park){
-                            intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
-                        } else {
-                            intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
-                        }
-                        intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
-                        startActivity(intent);
+                lv.setOnItemClickListener((parent, view, position, id) -> {
+                    String parkId = favoriteObjects.get(position).idCode();
+                    boolean is_park = favoriteObjects.get(position).isPark();
+                    Intent intent= new Intent(context, DetailParkActivity.class);
+                    if (is_park){
+                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+                    } else {
+                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
                     }
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+                    startActivity(intent);
                 });
             }
 

@@ -1,7 +1,6 @@
 package com.example.smithjarod_parkfinder.fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,21 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 
 import com.example.smithjarod_parkfinder.DetailParkActivity;
-import com.example.smithjarod_parkfinder.SearchActivity;
 import com.example.smithjarod_parkfinder.objects.ParkObject;
-import com.example.smithjarod_parkfinder.Parks_Helper;
 import com.example.smithjarod_parkfinder.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class NationalFragment extends ListFragment implements AdapterView.OnItemClickListener {
     public static final String TAG = "TAG.NationalFragment";
     public static final String ARRAY = "com.example.smithjarod_parkfinder.fragments.ARRAY";
     public static final String ISPARK = "com.example.smithjarod_parkfinder.fragments.ISPARK";
     ArrayList<ParkObject> parkObjects;
-    Parks_Helper parks_helper = new Parks_Helper();
     boolean isPark = true;
     public NationalFragment(){
         
@@ -64,14 +60,6 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         while(parkObjects.size() <1){
             Log.d(TAG, "onActivityCreated: loading");
         }
-//        DataTask task = new DataTask();
-//        task.execute();
-//        try {
-//            task.execute().get();
-//        } catch (ExecutionException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
         loadListView();
     }
 
@@ -80,60 +68,11 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         Log.d(TAG, "onItemClick: ");
     }
 
-//    private class DataTask extends AsyncTask<String,Integer,String> {
-//        ArrayAdapter adapter;
-//        @Override
-//        protected String doInBackground(String... strings) {
-//
-//            adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
-//                @NonNull
-//                @Override
-//                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//
-//                    View view = super.getView(position, convertView, parent);
-//                    TextView textView1 = view.findViewById(android.R.id.text1);
-//                    TextView textView2 = view.findViewById(android.R.id.text2);
-//                    String[] getStateCodesArray = getResources().getStringArray(R.array.stateCodesArray);
-//                    String[] getStatesArray = getResources().getStringArray(R.array.statesArray);
-//                    String getStateCode = parkObjects.get(position).getState();
-//                    int index = Arrays.asList(getStateCodesArray).indexOf(getStateCode);
-//                    String getFullStateName = getStatesArray[index];
-//                    textView1.setText(getFullStateName);
-//                    textView2.setText(parkObjects.get(position).getName());
-//                    return view;
-//                }
-//            };
-//
-//            return null;
-//
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//            setListAdapter(adapter);
-//            ListView lv = getListView();
-//            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    Log.d(TAG, "onItemClick: ");
-//                    String parkId = parkObjects.get(position).getParkId();
-//                    Intent intent= new Intent(getContext(), DetailParkActivity.class);
-//                    if (isPark){
-//                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
-//                    } else {
-//                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
-//                    }
-//                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
-//                    startActivity(intent);
-//                }
-//            });
-//            Log.d(TAG, "onActivityCreated: loaded adapter");
-//        }
-//    }
 
+    @SuppressWarnings("rawtypes")
     private void loadListView(){
         Log.d(TAG, "loadListView: loading list view");
+        //noinspection rawtypes,rawtypes
         ArrayAdapter adapter= new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
             @NonNull
             @Override
@@ -155,20 +94,17 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         Log.d(TAG, "loadListView: done loading listview");
         setListAdapter(adapter);
         ListView lv = getListView();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: ");
-                String parkId = parkObjects.get(position).getParkId();
-                Intent intent= new Intent(getContext(), DetailParkActivity.class);
-                if (isPark){
-                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
-                } else {
-                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
-                }
-                intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
-                startActivity(intent);
+        lv.setOnItemClickListener((parent, view, position, id) -> {
+            Log.d(TAG, "onItemClick: ");
+            String parkId = parkObjects.get(position).getParkId();
+            Intent intent= new Intent(getContext(), DetailParkActivity.class);
+            if (isPark){
+                intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+            } else {
+                intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
             }
+            intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+            startActivity(intent);
         });
 
     }

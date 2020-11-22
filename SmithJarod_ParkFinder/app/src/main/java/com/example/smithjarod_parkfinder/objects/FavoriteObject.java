@@ -6,9 +6,11 @@ public class FavoriteObject {
     boolean _isPark;
     String _idCode;
 
-    public FavoriteObject(){
-
-    }
+// --Commented out by Inspection START (11/22/20, 3:01 PM):
+//    public FavoriteObject(){
+//
+//    }
+// --Commented out by Inspection STOP (11/22/20, 3:01 PM)
     public FavoriteObject(String name, boolean isPark, String idCode) {
         this._name = name;
         this._isPark = isPark;
