@@ -57,18 +57,22 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //TODO: LOAD THE ARRAY
         parkObjects = new ArrayList<>();
         parkObjects = (ArrayList<ParkObject>)getArguments().getSerializable(ARRAY) ;
         isPark = getArguments().getBoolean(ISPARK);
-        Log.d(TAG, "onActivityCreated: "+parkObjects.size());
-
-        DataTask task = new DataTask();
-        try {
-            task.execute().get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+        Log.d(TAG, "onActivityCreated: number of objects: "+parkObjects.size());
+        while(parkObjects.size() <1){
+            Log.d(TAG, "onActivityCreated: loading");
         }
+//        DataTask task = new DataTask();
+//        task.execute();
+//        try {
+//            task.execute().get();
+//        } catch (ExecutionException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        loadListView();
     }
 
     @Override
@@ -76,57 +80,97 @@ public class NationalFragment extends ListFragment implements AdapterView.OnItem
         Log.d(TAG, "onItemClick: ");
     }
 
-    private class DataTask extends AsyncTask<String,Integer,String> {
-        ArrayAdapter adapter;
-        @Override
-        protected String doInBackground(String... strings) {
+//    private class DataTask extends AsyncTask<String,Integer,String> {
+//        ArrayAdapter adapter;
+//        @Override
+//        protected String doInBackground(String... strings) {
+//
+//            adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
+//                @NonNull
+//                @Override
+//                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//
+//                    View view = super.getView(position, convertView, parent);
+//                    TextView textView1 = view.findViewById(android.R.id.text1);
+//                    TextView textView2 = view.findViewById(android.R.id.text2);
+//                    String[] getStateCodesArray = getResources().getStringArray(R.array.stateCodesArray);
+//                    String[] getStatesArray = getResources().getStringArray(R.array.statesArray);
+//                    String getStateCode = parkObjects.get(position).getState();
+//                    int index = Arrays.asList(getStateCodesArray).indexOf(getStateCode);
+//                    String getFullStateName = getStatesArray[index];
+//                    textView1.setText(getFullStateName);
+//                    textView2.setText(parkObjects.get(position).getName());
+//                    return view;
+//                }
+//            };
+//
+//            return null;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//            setListAdapter(adapter);
+//            ListView lv = getListView();
+//            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    Log.d(TAG, "onItemClick: ");
+//                    String parkId = parkObjects.get(position).getParkId();
+//                    Intent intent= new Intent(getContext(), DetailParkActivity.class);
+//                    if (isPark){
+//                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+//                    } else {
+//                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
+//                    }
+//                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+//                    startActivity(intent);
+//                }
+//            });
+//            Log.d(TAG, "onActivityCreated: loaded adapter");
+//        }
+//    }
 
-            //TODO: LOAD THE LISTVIEW
-            adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    private void loadListView(){
+        Log.d(TAG, "loadListView: loading list view");
+        ArrayAdapter adapter= new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1,parkObjects){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-                    View view = super.getView(position, convertView, parent);
-                    TextView textView1 = view.findViewById(android.R.id.text1);
-                    TextView textView2 = view.findViewById(android.R.id.text2);
-                    String[] getStateCodesArray = getResources().getStringArray(R.array.stateCodesArray);
-                    String[] getStatesArray = getResources().getStringArray(R.array.statesArray);
-                    String getStateCode = parkObjects.get(position).getState();
-                    int index = Arrays.asList(getStateCodesArray).indexOf(getStateCode);
-                    String getFullStateName = getStatesArray[index];
-                    textView1.setText(getFullStateName);
-                    textView2.setText(parkObjects.get(position).getName());
-                    return view;
+                View view = super.getView(position, convertView, parent);
+                TextView textView1 = view.findViewById(android.R.id.text1);
+                TextView textView2 = view.findViewById(android.R.id.text2);
+                String[] getStateCodesArray = getResources().getStringArray(R.array.stateCodesArray);
+                String[] getStatesArray = getResources().getStringArray(R.array.statesArray);
+                String getStateCode = parkObjects.get(position).getState();
+                int index = Arrays.asList(getStateCodesArray).indexOf(getStateCode);
+                String getFullStateName = getStatesArray[index];
+                textView1.setText(getFullStateName);
+                textView2.setText(parkObjects.get(position).getName());
+                return view;
+            }
+        };
+        Log.d(TAG, "loadListView: done loading listview");
+        setListAdapter(adapter);
+        ListView lv = getListView();
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick: ");
+                String parkId = parkObjects.get(position).getParkId();
+                Intent intent= new Intent(getContext(), DetailParkActivity.class);
+                if (isPark){
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
+                } else {
+                    intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
                 }
-            };
+                intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
+                startActivity(intent);
+            }
+        });
 
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            setListAdapter(adapter);
-            ListView lv = getListView();
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d(TAG, "onItemClick: ");
-                    String parkId = parkObjects.get(position).getParkId();
-                    Intent intent= new Intent(getContext(), DetailParkActivity.class);
-                    if (isPark){
-                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.PARKS);
-                    } else {
-                        intent.putExtra(DetailParkActivity.EXTRA_INFO, DetailParkActivity.CAMPS);
-                    }
-                    intent.putExtra(DetailParkActivity.EXTRA_INFO_2,parkId);
-                    startActivity(intent);
-                }
-            });
-            Log.d(TAG, "onActivityCreated: loaded adapter");
-        }
     }
 
 }

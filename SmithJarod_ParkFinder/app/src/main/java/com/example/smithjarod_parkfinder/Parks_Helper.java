@@ -5,6 +5,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.smithjarod_parkfinder.objects.AddressObject;
 import com.example.smithjarod_parkfinder.objects.DetailParkObject;
@@ -81,7 +84,6 @@ public class Parks_Helper {
             tempDetailParkArray = getDetailParkList(context);
 
         } else {
-            //TODO: finish similar to isPark true
             jsonURL = campsURL+"&id="+parkId;
             Log.d(TAG, "detailParkObjects: "+jsonURL);
             tempDetailParkArray = getDetailParkList(context);
@@ -115,19 +117,18 @@ public class Parks_Helper {
                 boolean isConnected = networkInfo.isConnected();
                 if(isConnected){
                     DataTask task = new DataTask();
-//                    task.execute();
-                    try {
-
-                        Object wait = task.execute().get();
-                    }catch (InterruptedException | ExecutionException e){
-                        e.printStackTrace();
-                    }
+                    task.execute();
+//                    try {
+//
+//                        Object wait = task.execute().get();
+//                    }catch (InterruptedException | ExecutionException e){
+//                        e.printStackTrace();
+//                    }
                 }
 
             }
 
         } else {
-            //TODO: TOAST
         }
     }
 
@@ -148,6 +149,7 @@ public class Parks_Helper {
             data = getNetworkData();
             json = data;
             Log.d(TAG, "doInBackground: "+_parkId);
+            publishProgress(0);
             if(_isPark){
                 if (_parkId.contains("ALL")){
                     Log.d(TAG, "doInBackground: true");
@@ -165,13 +167,18 @@ public class Parks_Helper {
                     getCampDetailJSON();
                 }
             }
+            publishProgress(1);
             return data;
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            Log.d(TAG, "onProgressUpdate: "+values);
+            if(values[0] == 0){
+                Log.d(TAG, "onProgressUpdate: LOADING");
+            } else{
+                Log.d(TAG, "onProgressUpdate: DONE");
+            }
         }
 
         @Override
@@ -188,9 +195,6 @@ public class Parks_Helper {
     }
 
     private void getCampJSON() {
-
-        //TODO: setup similar to getParkJSON
-
         try {
             JSONObject outerObject = new JSONObject(json);
             JSONArray data = outerObject.getJSONArray("data");
@@ -217,9 +221,6 @@ public class Parks_Helper {
                         Log.d(TAG, "getCampJSON: added"+parkName);
                     }
                 }
-
-
-                //TODO: GET STATES
             }
         }catch ( JSONException e){
             e.printStackTrace();

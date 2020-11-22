@@ -1,6 +1,15 @@
 package com.example.smithjarod_parkfinder.objects;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 public class ParkObject implements Serializable {
 
@@ -9,6 +18,7 @@ public class ParkObject implements Serializable {
     String parkId;
     String latitude;
     String longitude;
+    //String address;
 
     public ParkObject(String parkName, String parkStates, String parkId, String latitude, String longitude) {
         this.parkName = parkName;
@@ -16,6 +26,7 @@ public class ParkObject implements Serializable {
         this.parkId = parkId;
         this.latitude = latitude;
         this.longitude = longitude;
+//        this.address = address;
     }
 
     public String getName(){
@@ -25,6 +36,24 @@ public class ParkObject implements Serializable {
     public String getParkId(){ return parkId; }
     public String getLatitude(){ return latitude; }
     public String getLongitude(){return longitude; }
+
+//    public LatLng getLatLng(Context context, String address){
+//        Geocoder geocoder = new Geocoder(context);
+//        List<Address> addressList = null;
+//        LatLng latLng = null;
+//        try {
+//            addressList = geocoder.getFromLocationName(address,1);
+//            if (addressList == null){
+//                return null;
+//            }
+//            Address getResult = addressList.get(0);
+//            latLng = new LatLng(getResult.getLatitude(),getResult.getLongitude());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Log.d("TAG.ParkObject", "getLatLng: "+e);
+//        }
+//        return latLng;
+//    }
 
 
 }

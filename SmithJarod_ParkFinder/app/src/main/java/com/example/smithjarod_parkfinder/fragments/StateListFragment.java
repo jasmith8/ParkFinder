@@ -49,13 +49,13 @@ public class StateListFragment extends ListFragment implements AdapterView.OnIte
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
+        container.removeAllViews();
         return inflater.inflate(R.layout.search_listview_fragment,container,false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //TODO: LOAD THE ARRAY
         parkObjects = new ArrayList<>();
         parkObjects = (ArrayList<ParkObject>)getArguments().getSerializable(ARRAY) ;
         isPark = getArguments().getBoolean(ISPARK);

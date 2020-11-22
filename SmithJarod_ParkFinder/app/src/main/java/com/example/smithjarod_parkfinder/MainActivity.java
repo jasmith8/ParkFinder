@@ -6,10 +6,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,15 +66,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         Intent intent= new Intent(this, SearchActivity.class);
-        switch (v.getId()){
-            case R.id.parks:
-                intent.putExtra(EXTRA_INFO, PARKS);
-                startActivity(intent);
-                break;
-            case R.id.camps:
-                intent.putExtra(EXTRA_INFO, CAMPS);
-                startActivity(intent);
+
+        boolean isConnected = false;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+            cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED){
+            Log.d(TAG, "onClick: CONNECTED");
+            Toast.makeText(this, R.string.loading_data,Toast.LENGTH_LONG).show();
+
+            switch (v.getId()){
+                case R.id.parks:
+                    intent.putExtra(EXTRA_INFO, PARKS);
+                    startActivity(intent);
+                    break;
+                case R.id.camps:
+                    intent.putExtra(EXTRA_INFO, CAMPS);
+                    startActivity(intent);
+            }
+        } else {
+            Log.d(TAG, "onClick: NOT CONNECTED");
+            Toast.makeText(this, R.string.no_internet,Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
     void checkPermissions(){

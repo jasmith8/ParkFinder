@@ -49,11 +49,19 @@ public class SearchActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: get parks");
             isPark = true;
             parkObjects = parks_helper.parkObjects(isPark, this,"ALL");
+            while (parkObjects.size()<1){
+                Log.d(TAG, "onCreate: loading");
+            }
+
         } else {
             Log.d(TAG, "onCreate: get camps");
             isPark = false;
             campObjects = parks_helper.parkObjects(isPark, this,"ALL");
+            while(campObjects.size()<1){
+                Log.d(TAG, "onCreate: loading");
+            }
         }
+        Log.d(TAG, "onCreate: loaded");
         getSupportFragmentManager().executePendingTransactions();
 
         sharedPreferences = context.getSharedPreferences(NATIONAL_STATE,Context.MODE_PRIVATE);
@@ -83,6 +91,7 @@ public class SearchActivity extends AppCompatActivity {
     }
     
     void chooseNationalState(int selectedTab, SharedPreferences.Editor editor){
+
         if (selectedTab ==0){
             editor.putInt(NATIONAL_STATE_KEY,selectedTab);
             openNationalView();
@@ -125,7 +134,6 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //TODO SEND TO FAV LIST
         Intent intent= new Intent(this, FavoritesActivity.class);
         startActivity(intent);
         return super.onOptionsItemSelected(item);

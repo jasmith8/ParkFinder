@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.example.smithjarod_parkfinder.Map_Helper;
 import com.example.smithjarod_parkfinder.objects.ParkObject;
 import com.example.smithjarod_parkfinder.R;
 import com.google.android.gms.maps.MapFragment;
@@ -87,7 +89,6 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         stateSelected = stateCodes[0];
         filteredList.clear();
         filteredList = (ArrayList<ParkObject>) parkObjects.stream().filter(parkObject -> parkObject.getState().contains(stateSelected)).collect(Collectors.toList());
-        //TODO:LOAD FRAGMENT
 
     }
 
@@ -100,7 +101,6 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
             filteredList = (ArrayList<ParkObject>) parkObjects.stream().filter(parkObject -> parkObject.getState().contains(stateSelected)).collect(Collectors.toList());
         }
 
-        //TODO: LOAD FRAGMENT
         if(parent == mapOrListSpinner){
             if (position ==0){
                 listSelected = true;
@@ -121,6 +121,7 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
     }
 
     void openMap(){
+        if (filteredList.size()>0){
         MapsFragment mapFragment =  new MapsFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARRAY,filteredList);
@@ -128,8 +129,12 @@ public class StateFragment extends Fragment  implements AdapterView.OnItemSelect
         bundle.putBoolean(ISPARK,isPark);
         mapFragment.setArguments(bundle);
 
-        getActivity().getFragmentManager().beginTransaction()
-                .replace(R.id.mapFrame,mapFragment).commit();
+            getActivity().getFragmentManager().beginTransaction()
+                    .replace(R.id.stateFrame,mapFragment).commit();
+        } else {
+            Toast.makeText(getContext(),"No locations in the state",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     void openList(){

@@ -96,6 +96,9 @@ public class DetailParkActivity extends AppCompatActivity {
         if(typeOfDetail.contains(DetailParkActivity.PARKS)){
             Log.d(TAG, "onCreate: get parks");
             parkObjects = parks_helper.detailParkObjects(true, this,parkId);
+            while (parkObjects.size()<1){
+                Log.d(TAG, "onCreate: LOADING");
+            }
             isPark = true;
 
             parkName.setText(parkObjects.get(0).getParkNameText());
@@ -123,6 +126,9 @@ public class DetailParkActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: get camps");
             isPark = false;
             parkObjects = parks_helper.detailParkObjects(false, this,parkId);
+            while (parkObjects.size()<1){
+                Log.d(TAG, "onCreate: LOADING");
+            }
             parkName.setText(parkObjects.get(0).getParkNameText());
             ArrayList<AddressObject> addressObjects = parkObjects.get(0).getAddresses();
             for (AddressObject obj: addressObjects){
@@ -131,6 +137,7 @@ public class DetailParkActivity extends AppCompatActivity {
                     locationDetail.setText(obj.getAddress());
                 }
             }
+            
             Log.d(TAG, "onCreate: address: "+locationDetail.getText().toString());
             address = locationDetail.getText().toString();
             descriptionDetail.setText(parkObjects.get(0).getDescriptionDetailText());
@@ -204,7 +211,6 @@ public class DetailParkActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.addDB:
-                //TODO ADD TO DB
                 mDatabase.child("users").child(userID).child(pID).child("isPark").setValue(isPark);
                 mDatabase.child("users").child(userID).child(pID).child("pID").setValue(pID);
                 mDatabase.child("users").child(userID).child(pID).child("pName").setValue(pName);
@@ -214,7 +220,6 @@ public class DetailParkActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), R.string._added,Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.removeDB:
-                //TODO REMOVE TO DB
                 mDatabase.child("users").child(userID).child(pID).removeValue();
                 addItem.setVisible(true);
                 remItem.setVisible(false);
